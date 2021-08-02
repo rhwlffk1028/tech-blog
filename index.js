@@ -1,30 +1,43 @@
 const express = require('express');
+const session = require('express-session');
+const exphbs = require('express-handlebars');
+const allRoutes = require('./controllers')
+const helpers = require('./utils/helpers');
+
 const sequelize = require("./config/connection")
-// Sets up the Express App
-// =============================================================
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
-const allRoutes = require('./controllers');
 
+// Set up Handlebars.js engine with custom helpers
+const hbs = exphbs.create({ helpers });
 
-// Sets up the Express app to handle data parsing
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const sess = {
+    secret: "techBlogBlog",
+    // Server will expire in 2 hr.
+    cookie: {
+        maxAge: 1000*60*60*2
+    },
+    resave: false,
+    saveUninitialized: true,
+    store: new SequelizeStore({
+        db: sequelize
+    })
+};
 
-// Static directory
-app.use(express.static('public'));
+app.use(session(sess));
 
-const exphbs = require('express-handlebars');
-
-const hbs = exphbs.create({});
-
+// Inform Express.js on which template engine to use
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
 app.use('/',allRoutes);
 
-sequelize.sync({ force: false }).then(function() {
-    app.listen(PORT, function() {
-    console.log('App listening on PORT ' + PORT);
-    });
+sequelize.sync({ force: false }).then(() => {
+    app.listen(PORT, () => console.log('App listening on PORT ' + PORT));
 });
