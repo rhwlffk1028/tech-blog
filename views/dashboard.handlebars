@@ -1,3 +1,27 @@
-<a href="/dashboard/create"><button type="button" class="btn btn-primary">Create Post</button></a>
+<main class="container my-4 custom-wrapper-all">
+    <div class="row justify-content-center">
+        <div class="col-12 d-flex flex-column justify-content-center px-2 mt-3">
 
-{{#if posts.length}}
+            <div class="col-12 col-xxl-5 mx-2">
+                <div class="col-12">
+                    <div class="card bg-success">
+                        <h3 class="text-center p-2">My posts</h3>
+                    </div>
+                </div>
+
+                <div class="list-group p-3 mb-5">
+                    {{#each myposts}}
+                    {{> mypost}}
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="col-12 col-xxl-5 mx-2 text-center">
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Post
+                </button>
+            </div>
+
+        </div>
+    </div>
+</main>

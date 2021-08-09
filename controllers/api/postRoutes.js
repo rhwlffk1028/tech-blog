@@ -1,17 +1,12 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../../models');
-const withAuth = require('../../utils/auth');
+const auth = require('../../utils/auth');
 
-router.get("/", withAuth, async (req, res) => {
+// get all posts
+router.get("/", async (req, res) => {
     try {
         const postData = await Post.findAll({
-            attributes: [
-                'id',
-                'title',
-                'post_content',
-                'user_id',
-                'created_at'
-            ],
+            attributes: ['id', 'title', 'post_content', 'user_id', 'created_at'],
             include: [
                 {
                     model: User,
@@ -25,16 +20,11 @@ router.get("/", withAuth, async (req, res) => {
     }
 });
 
-router.get("/:id", withAuth, async (req, res) => {
+// get a post by id
+router.get("/:id", async (req, res) => {
     try {
         const postData = await Post.findByPk(req.params.id, {
-            attributes: [
-                'id',
-                'title',
-                'post_content',
-                'user_id',
-                'created_at'
-            ],
+            attributes: ['id', 'title', 'post_content', 'user_id', 'created_at'],
             include: [
                 {
                     model: User,
@@ -54,20 +44,23 @@ router.get("/:id", withAuth, async (req, res) => {
     }
 });
 
-router.post('/', withAuth, async (req, res) => {
+// create a post only if it's logged in
+router.post('/', auth, async (req, res) => {
     try {
         const postData = await Post.create({
             title: req.body.title,
             post_content: req.body.post_content,
             user_id: req.session.user_id
         });
+
         res.status(200).json(postData);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-router.put('/:id', withAuth, async (req, res) => {
+// update a post only if it's logged in
+router.put('/:id', auth, async (req, res) => {
     try {
         const postData = await Post.update(
             {
@@ -80,7 +73,7 @@ router.put('/:id', withAuth, async (req, res) => {
                 }
             });
 
-        if (!postData[0]) {
+        if (!postData) {
             res.status(404).json({ message: 'No post found with this id!' });
             return;
         }
@@ -91,7 +84,8 @@ router.put('/:id', withAuth, async (req, res) => {
     }
 });
 
-router.delete('/:id', withAuth, async (req, res) => {
+// delete a post only if it's logged in
+router.delete('/:id',auth, async (req, res) => {
     try {
         const postData = await Post.destroy({
             where: {

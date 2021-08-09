@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 const hbs = exphbs.create({ helpers });
 
 const sess = {
-    secret: "techBlogBlog",
+    secret: process.env.SESSION_SECRET,
     // Server will expire in 2 hr.
     cookie: {
         maxAge: 1000*60*60*2
@@ -37,6 +37,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use('/',allRoutes);
+
+
 
 sequelize.sync({ force: false }).then(() => {
     app.listen(PORT, () => console.log('App listening on PORT ' + PORT));

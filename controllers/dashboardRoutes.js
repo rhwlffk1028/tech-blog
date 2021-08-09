@@ -1,23 +1,23 @@
 const router = require('express').Router();
 const sequelize = require('../config/connection');
 const {User,Post,Comment} = require('../models');
-const withAuth = require('../utils/auth');
 
-router.get('/', withAuth, async (req, res) => {
+// dashboard page
+router.get('/dashboard', async (req, res) => {
     try {
-        const postData = await Post.findAll({
-            attributes: [
-                'id',
-                'title',
-                'post_content',
-                'user_id',
-                'created_at'
-            ],
+        const mypostData = await Post.findAll({
+            where: {
+                user_id: req.session.user_id
+            },
+            attributes: ['id', 'title', 'post_content', 'user_id', 'created_at'],
             include: [
                 {
                     model: Comment,
                     attributes: ["id", "comment_text", "user_id", "post_id", "created_at"],
-                    include: [{model: User, attributes: ["username"]}]
+                    include: [{
+                        model: User, 
+                        attributes: ["username"]
+                    }]
                 },
                 {
                     model: User,
@@ -26,9 +26,44 @@ router.get('/', withAuth, async (req, res) => {
             ]
         });
 
-        const posts = postData.map((post) => post.get({plain:true}));
+        const myposts = mypostData.map((post) => post.get({plain:true}));
 
         res.render('dashboard', {
+            myposts,
+            loggedIn: req.session.loggedIn
+        });
+
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+router.get('/dashboard/create', async(req, res) => {
+    try {
+        const createData = Post.findAll({
+            where:{
+                user_id: req.session.user_id
+            },
+            attributes: ['id', 'title', 'created_at', 'post_content'],
+            include: [
+                {
+                    model: Comment,
+                    attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                    include: {
+                        model: User,
+                        attributes: ['username']
+                    }
+                },
+                {
+                    model: User,
+                    attributes: ['username']
+                }
+            ]
+        });
+
+        const posts = postData.map((post) => post.get({plain:true}));
+
+        res.render('createPost', {
             posts,
             loggedIn: true
         });
@@ -38,30 +73,21 @@ router.get('/', withAuth, async (req, res) => {
     }
 });
 
-router.get('/create', withAuth, (req, res) => {
-    res.render('createPost', {
-        loggedIn: true
-    });
-});
-
-router.get('/update/:id', withAuth, async (req, res) => {
+router.get('/dashboard/update/:id', async (req, res) => {
     try {
         const postData = await Post.findOne({
             where: {
                 id: req.params.id
             },
-            attributes: [
-                'id',
-                'title',
-                'post_content',
-                'user_id',
-                'created_at'
-            ],
+            attributes: ['id', 'title', 'post_content', 'user_id', 'created_at'],
             include: [
                 {
                     model: Comment,
                     attributes: ["id", "comment_text", "user_id", "post_id", "created_at"],
-                    include: [{model: User, attributes: ["username"]}]
+                    include: [{
+                        model: User, 
+                        attributes: ["username"]
+                    }]
                 },
                 {
                     model: User,
@@ -70,21 +96,16 @@ router.get('/update/:id', withAuth, async (req, res) => {
             ]
         });
 
-        if (!postData) {
-            res.status(400).json({message: "No post found with this id!"});
-            return;
-        }
-
-        const posts = postData.map((post) => post.get({plain:true}));
+        const post = postData.map((post) => post.get({plain:true}));
 
         res.render('updatePost', {
-            posts,
+            post,
             loggedIn: true
         });
 
     } catch (err) {
         res.status(500).json(err);
     }
-})
+});
 
 module.exports = router;

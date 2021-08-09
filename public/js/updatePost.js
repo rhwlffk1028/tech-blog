@@ -9,10 +9,11 @@ async function updatePost(event) {
 
     const response = await fetch('/api/posts/' + post_id, {
         method: 'Put',
-        body: JSON.stringify({title, post_content}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        body: JSON.stringify({
+            title, 
+            post_content
+        }),
+        headers: { 'Content-Type': 'application/json'}
     });
 
     if (response.ok) {

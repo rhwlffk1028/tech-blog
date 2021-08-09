@@ -6,15 +6,18 @@ async function createPost(event) {
 
     const response = await fetch('/api/posts', {
         method: 'Post',
-        body: JSON.stringify({title, post_content}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        body: JSON.stringify({
+            title, 
+            post_content
+        }),
+        headers: { 'Content-Type': 'application/json'}
     });
 
     if (response.ok) {
+        console.log('Success');
         document.location.replace('/dashboard');
     } else {
+        console.log('Failed');
         alert(response.statusText);
     }
 }

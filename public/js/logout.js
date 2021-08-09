@@ -5,10 +5,12 @@ async function logout() {
   });
 
   if (response.ok) {
+    console.log('Success');
     document.location.replace('/');
   } else {
+    console.log('Failed');
     alert(response.statusText);
   }
 }
 
-document.querySelector('#logout').addEventListener('click', logout);
+document.querySelector('#logoutBtn').addEventListener('click', logout);
