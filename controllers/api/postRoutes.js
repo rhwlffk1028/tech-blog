@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { User, Post, Comment } = require('../../models');
+const { Post, User, Comment } = require('../../models');
+const sequelize = require('../../config/connection');
 const auth = require('../../utils/auth');
 
 // get all posts
@@ -12,6 +13,14 @@ router.get("/", async (req, res) => {
                     model: User,
                     attributes: ["username"],
                 },
+                {
+                    model: Comment,
+                    attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                    include: {
+                        model: User,
+                        attributes: ['username']
+                    }
+                }
             ]
         });
         res.status(200).json(postData);
@@ -30,6 +39,14 @@ router.get("/:id", async (req, res) => {
                     model: User,
                     attributes: ["username"],
                 },
+                {
+                    model: Comment,
+                    attributes: ['id', 'comment_text', 'post_id', 'user_id', 'created_at'],
+                    include: {
+                        model: User,
+                        attributes: ['username']
+                    }
+                }
             ]
         });
 
@@ -85,7 +102,7 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 // delete a post only if it's logged in
-router.delete('/:id',auth, async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
     try {
         const postData = await Post.destroy({
             where: {

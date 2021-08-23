@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { User, Post, Comment } = require('../../models');
+const auth = require('../../utils/auth');
 const bcrypt = require('bcrypt');
 
 // get all users '/api/users'
@@ -14,7 +15,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-// get one user 'api/users/id'
+// get specific user /api/users/id
 router.get("/:id", async (req, res) => {
     try {
         const userData = await User.findOne(
@@ -56,6 +57,7 @@ router.post("/", async (req, res) => {
         req.session.save(() => {
             req.session.username = userData.username;
             req.session.user_id = userData.id;
+            req.session.loggedIn = true;
 
             res.status(200).json(userData);
         });
@@ -109,5 +111,6 @@ router.post('/logout', (req, res) => {
         res.status(404).end();
     }
 });
+
 
 module.exports = router;

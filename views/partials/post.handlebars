@@ -1,16 +1,25 @@
 <div class="card mb-6">
-    <header class="card-header card-header-title bg-secondary">
+    <header class="card-header card-header-title has-background-link">
 
-        <a href="/post/{{id}}" style="text-decoration: none;" class="d-flex flex-row justify-content-between">
-            <h4 class="text-light" >{{title}}</h4>
-            <p class="text-light">posted by <b>{{user.username}}</b> on {{format_date created_at}}</p>
-        </a>
+        <div class="column">
+            <p class=" has-text-primary-light">
+                <a href="/post/{{id}}" class="has-text-black is-capitalized is-pulled-left">{{title}} </a>
+            </p>
+        </div>
+
+        <div class="column">
+            <span class=""> </span>
+        </div>
 
     </header>
 
-    <div class="card-contentm m-2">
-        <div>
+    <div class="card-content has-background-dark">
+        <div class="content has-text-light">
             {{post_content}}
+        </div>
+        <div class="is-pulled-right has-text-light">
+            <b>{{user.username}}</b> | {{format_date created_at}} | <a href="/post/{{id}}">{{comments.length}}
+                {{format_plural "comment" comments.length}}</a>
         </div>
     </div>
 </div>
