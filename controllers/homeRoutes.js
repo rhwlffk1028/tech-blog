@@ -82,7 +82,7 @@ router.get('/post/:id', async (req, res) => {
 
         res.render('singlePost', {
             post,
-            loggedIn: true
+            loggedIn: req.session.loggedIn
         });
     } catch (err) {
         console.log(err);
