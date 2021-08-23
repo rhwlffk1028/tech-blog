@@ -1,7 +1,7 @@
 {
   "name": "tech-blog",
   "version": "1.0.0",
-  "description": "",
+  "description": "tech-blog",
   "main": "server.js",
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -14,7 +14,7 @@
     "mysql2": "^2.3.0",
     "sequelize": "^6.6.5"
   },
-  "devDependencies": {},
+  "devDependencies": {"jest": "^26.0.1"},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node seeds/seed.js",
@@ -25,7 +25,7 @@
     "url": "git+https://github.com/rhwlffk1028/tech-blog.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "kevin choi",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rhwlffk1028/tech-blog/issues"
